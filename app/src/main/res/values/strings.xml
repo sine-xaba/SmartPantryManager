@@ -1,4 +1,18 @@
 <resources>
+    <string name="recipe_detail_title">Recipe</string>
+
+    <string name="recipe_ingredients_heading">Ingredients required</string>
+
+    <string name="recipe_steps_heading">Preparation steps</string>
+
+    <string name="recipe_loading">Loading recipe…</string>
+
+    <string name="recipe_not_found">This recipe could not be found.</string>
+
+    <string name="recipe_load_error">Could not load this recipe. Please go back and try again.</string>
+
+    <string name="back_to_suggested_recipes">Back to suggested recipes</string>
+
     <string name="suggested_recipes_title">Suggested Recipes</string>
 
     <string name="suggested_recipes_subtitle">Recipes you can make using your current pantry.</string>
