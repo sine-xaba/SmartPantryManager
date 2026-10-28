@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.sine.smartpantrymanager.adapter.PantryAdapter;
 import com.sine.smartpantrymanager.database.PantryRepository;
 import com.sine.smartpantrymanager.model.PantryItem;
+import com.sine.smartpantrymanager.database.RecipeRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             Executors.newSingleThreadExecutor();
 
     private PantryRepository pantryRepository;
+    private RecipeRepository recipeRepository;
     private PantryAdapter pantryAdapter;
 
     private ListView listPantry;
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
         textPantryStatus = findViewById(R.id.textPantryStatus);
 
         pantryRepository = new PantryRepository(
+                getApplicationContext()
+        );
+        recipeRepository = new RecipeRepository(
                 getApplicationContext()
         );
 
@@ -134,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         databaseExecutor.execute(() -> {
             try {
+                recipeRepository.ensureRecipesAreSeeded();
                 List<PantryItem> items =
                         pantryRepository.getAllPantryItems(true);
 
@@ -285,6 +291,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (pantryRepository != null) {
+            if (recipeRepository != null) {
+                databaseExecutor.execute(recipeRepository::close);
+            }
             databaseExecutor.execute(pantryRepository::close);
         }
 
