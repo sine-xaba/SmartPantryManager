@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
+import androidx.appcompat.app.AlertDialog;
 import com.sine.smartpantrymanager.adapter.PantryAdapter;
 import com.sine.smartpantrymanager.database.PantryRepository;
 import com.sine.smartpantrymanager.model.PantryItem;
@@ -73,6 +73,25 @@ public class MainActivity extends AppCompatActivity {
 
         pantryAdapter = new PantryAdapter(this);
         listPantry.setAdapter(pantryAdapter);
+        listPantry.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    PantryItem selectedItem =
+                            pantryAdapter.getItem(position);
+
+                    openEditIngredient(selectedItem.getId());
+                }
+        );
+
+        listPantry.setOnItemLongClickListener(
+                (parent, view, position, id) -> {
+                    PantryItem selectedItem =
+                            pantryAdapter.getItem(position);
+
+                    confirmDeletePantryItem(selectedItem);
+
+                    return true;
+                }
+        );
         buttonAddIngredient = findViewById(R.id.buttonAddIngredient);
 
         buttonAddIngredient.setOnClickListener(view -> {
@@ -163,6 +182,98 @@ public class MainActivity extends AppCompatActivity {
 
                     textPantryStatus.setText(
                             R.string.pantry_load_error
+                    );
+
+                    textPantryStatus.setClickable(true);
+                });
+            }
+        });
+    }
+    private void openEditIngredient(long pantryItemId) {
+        Intent intent = new Intent(
+                MainActivity.this,
+                AddEditIngredientActivity.class
+        );
+
+        intent.putExtra(
+                AddEditIngredientActivity.EXTRA_PANTRY_ITEM_ID,
+                pantryItemId
+        );
+
+        startActivity(intent);
+    }
+
+    private void confirmDeletePantryItem(PantryItem item) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_ingredient)
+                .setMessage(R.string.delete_ingredient_confirmation)
+                .setPositiveButton(
+                        android.R.string.ok,
+                        (dialog, which) ->
+                                deletePantryItem(item)
+                )
+                .setNegativeButton(
+                        android.R.string.cancel,
+                        null
+                )
+                .show();
+    }
+
+    private void deletePantryItem(PantryItem item) {
+        if (loading || databaseExecutor.isShutdown()) {
+            return;
+        }
+
+        loading = true;
+
+        textPantryStatus.setText(R.string.pantry_loading);
+        textPantryStatus.setClickable(false);
+
+        databaseExecutor.execute(() -> {
+            try {
+                boolean deleted =
+                        pantryRepository.deletePantryItem(
+                                item.getId()
+                        );
+
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
+
+                    loading = false;
+
+                    if (deleted) {
+                        textPantryStatus.setText(
+                                R.string.delete_ingredient_success
+                        );
+
+                        loadPantry();
+                    } else {
+                        textPantryStatus.setText(
+                                R.string.delete_ingredient_error
+                        );
+
+                        textPantryStatus.setClickable(true);
+                    }
+                });
+
+            } catch (Exception exception) {
+                Log.e(
+                        TAG,
+                        "Failed to delete pantry item",
+                        exception
+                );
+
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
+
+                    loading = false;
+
+                    textPantryStatus.setText(
+                            R.string.delete_ingredient_error
                     );
 
                     textPantryStatus.setClickable(true);

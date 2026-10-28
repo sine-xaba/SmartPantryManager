@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">SmartPantryManager</string>
+
     <string name="pantry_title">My Pantry</string>
 
     <string name="pantry_subtitle">Keep track of the ingredients you have at home.</string>
@@ -30,6 +31,15 @@
 
     <string name="save_ingredient">Save ingredient</string>
     <string name="cancel_ingredient">Cancel</string>
+    <string name="delete_ingredient">Delete ingredient</string>
+
+    <string name="delete_ingredient_confirmation">
+    Delete this pantry item? This will not delete any recipe.
+</string>
+
+    <string name="delete_ingredient_success">Pantry item deleted.</string>
+
+    <string name="delete_ingredient_error">Could not delete this pantry item. Please try again.</string>
 
     <string-array name="pantry_units">
         <item>g</item>
