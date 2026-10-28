@@ -1,21 +1,25 @@
 package com.sine.smartpantrymanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.content.Intent;
+
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.appcompat.app.AlertDialog;
+
 import com.sine.smartpantrymanager.adapter.PantryAdapter;
 import com.sine.smartpantrymanager.database.PantryRepository;
-import com.sine.smartpantrymanager.model.PantryItem;
 import com.sine.smartpantrymanager.database.RecipeRepository;
+import com.sine.smartpantrymanager.model.PantryItem;
+import com.sine.smartpantrymanager.R;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -72,12 +76,14 @@ public class MainActivity extends AppCompatActivity {
         pantryRepository = new PantryRepository(
                 getApplicationContext()
         );
+
         recipeRepository = new RecipeRepository(
                 getApplicationContext()
         );
 
         pantryAdapter = new PantryAdapter(this);
         listPantry.setAdapter(pantryAdapter);
+
         listPantry.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     PantryItem selectedItem =
@@ -97,7 +103,10 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
         );
-        buttonAddIngredient = findViewById(R.id.buttonAddIngredient);
+
+        buttonAddIngredient = findViewById(
+                R.id.buttonAddIngredient
+        );
 
         buttonAddIngredient.setOnClickListener(view -> {
             Intent intent = new Intent(
@@ -109,6 +118,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonAddIngredient.setEnabled(true);
+
+        Button suggestedRecipesButton = new Button(this);
+        suggestedRecipesButton.setText("Suggested recipes");
+        suggestedRecipesButton.setMinHeight(48);
+
+        suggestedRecipesButton.setOnClickListener(view -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    SuggestedRecipesActivity.class
+            );
+
+            startActivity(intent);
+        });
+
+        ((android.view.ViewGroup) findViewById(R.id.main))
+                .addView(suggestedRecipesButton, 2);
 
         textPantryStatus.setOnClickListener(view -> {
             if (loadFailed && !loading) {
@@ -140,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         databaseExecutor.execute(() -> {
             try {
                 recipeRepository.ensureRecipesAreSeeded();
+
                 List<PantryItem> items =
                         pantryRepository.getAllPantryItems(true);
 
@@ -195,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void openEditIngredient(long pantryItemId) {
         Intent intent = new Intent(
                 MainActivity.this,
@@ -291,10 +318,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (pantryRepository != null) {
-            if (recipeRepository != null) {
-                databaseExecutor.execute(recipeRepository::close);
-            }
             databaseExecutor.execute(pantryRepository::close);
+        }
+
+        if (recipeRepository != null) {
+            databaseExecutor.execute(recipeRepository::close);
         }
 
         databaseExecutor.shutdown();
