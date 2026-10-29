@@ -31,9 +31,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:enabled="false"
             android:minHeight="48dp"
             android:text="@string/add_ingredient" />
+
+        <Button
+            android:id="@+id/buttonSuggestedRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp"
+            android:text="Suggested recipes" />
+
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp"
+            android:text="Settings" />
 
         <TextView
             android:id="@+id/textPantryStatus"

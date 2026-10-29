@@ -118,25 +118,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonAddIngredient.setEnabled(true);
-
-        Button suggestedRecipesButton = new Button(this);
-        suggestedRecipesButton.setText("Suggested recipes");
-        suggestedRecipesButton.setMinHeight(48);
-        Button settingsButton = new Button(this);
-        settingsButton.setText("Settings");
-        settingsButton.setMinHeight(48);
-
-        settingsButton.setOnClickListener(view -> {
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    SettingsActivity.class
-            );
-
-            startActivity(intent);
-        });
-
-        ((android.view.ViewGroup) findViewById(R.id.main))
-                .addView(settingsButton);
+        Button suggestedRecipesButton = findViewById(
+                R.id.buttonSuggestedRecipes
+        );
 
         suggestedRecipesButton.setOnClickListener(view -> {
             Intent intent = new Intent(
@@ -147,9 +131,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        ((android.view.ViewGroup) findViewById(R.id.main))
-                .addView(suggestedRecipesButton);
+        Button settingsButton = findViewById(R.id.buttonSettings);
 
+        settingsButton.setOnClickListener(view -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    SettingsActivity.class
+            );
+
+            startActivity(intent);
+        });
         textPantryStatus.setOnClickListener(view -> {
             if (loadFailed && !loading) {
                 loadPantry();
