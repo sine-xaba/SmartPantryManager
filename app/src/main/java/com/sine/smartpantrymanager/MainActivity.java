@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ((android.view.ViewGroup) findViewById(R.id.main))
-                .addView(settingsButton, 3);
+                .addView(settingsButton);
 
         suggestedRecipesButton.setOnClickListener(view -> {
             Intent intent = new Intent(
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ((android.view.ViewGroup) findViewById(R.id.main))
-                .addView(suggestedRecipesButton, 2);
+                .addView(suggestedRecipesButton);
 
         textPantryStatus.setOnClickListener(view -> {
             if (loadFailed && !loading) {
